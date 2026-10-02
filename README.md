@@ -6,7 +6,7 @@ arrive wrong. It is a sibling of
 [Signal Stonefish](https://github.com/dekmeister/signal-stonefish) and is built
 the same way.
 
-Pick a voice clip, a music clip, a 1020 Hz test tone, or your own file, then
+Pick a voice clip (three voices to choose from), a music clip, a 1020 Hz test tone, or your own file, then
 choose a codec and a channel:
 
 - **listen**: play/pause/stop, with the sound updating live as you change settings
@@ -50,11 +50,11 @@ Presets cover comparisons (linear vs μ-law, linear vs ADPCM at the same rate, w
 | Path | What |
 |---|---|
 | `index.html` | The whole app: HTML, CSS and JS inline, no dependencies |
-| `audio/voice.wav`, `audio/music.wav` | Bundled clips (CC BY; see `audio/SOURCES.md`) |
+| `audio/voice.wav`, `audio/voice-woman.wav`, `audio/voice-deep.wav`, `audio/music.wav` | Bundled clips (CC BY; see `audio/SOURCES.md`) |
 | `audio/SOURCES.md` | Where each clip came from, its licence and attribution |
 
 The page looks for `audio/voice.{wav,mp3,ogg,flac,m4a,opus}` and the same
-names for `music`. Clips are mixed to mono, trimmed to 20 s and normalised to
+extensions for `voice-woman`, `voice-deep` and `music`. Clips are mixed to mono, trimmed to 20 s and normalised to
 −3 dBFS peak.
 
 ## Running
