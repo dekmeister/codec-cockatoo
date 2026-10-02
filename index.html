@@ -189,92 +189,43 @@ dialog form { text-align: right; margin-top: 12px; }
 
 <dialog id="about">
   <h2>How speech codecs work</h2>
-  <p>A codec (coder–decoder) turns audio into a stream of bits and back. Speech codecs trade bit rate against quality.
-    On this page the encoder writes real bits. The channel can flip or drop them, and the decoder rebuilds the sound from whatever arrives.</p>
+  <p>A codec turns sound into bits and back, and speech codecs trade bit rate against quality. Here the encoder writes real bits.
+    The channel can drop or flip them, and the decoder rebuilds the sound from whatever arrives.</p>
 
-  <h3>Sampling and bandwidth</h3>
-  <p>Telephone codecs sample at 8 kHz, so they can't carry anything above 4 kHz. The anti-alias filter here cuts at 3.4 kHz, the classic
-    telephone band (6.8 kHz for 16 kHz sampling). The 48 kHz source is filtered and decimated to the codec rate, and the decoded sound is
-    filtered back up for playback. Both filters are zero-phase, so they add no delay.</p>
-
-  <h3>PCM and companding</h3>
-  <p>Linear PCM rounds each sample to one of 2<sup>bits</sup> evenly spaced levels. Each bit is worth about 6 dB, but quiet sounds get the
-    same coarse steps as loud ones. G.711 μ-law and A-law use 8 bits, with steps that grow with the level (8 segments of 16 steps).
-    The error then stays roughly in proportion to the signal: about 38 dB SNR over a wide range of levels. 8-bit linear only does that well on loud sounds.
-    Compare the “8-bit linear” and “PSTN μ-law” presets.</p>
-
-  <h3>ADPCM</h3>
-  <p>Adaptive differential PCM predicts each sample from the previous ones and sends only the prediction error, with a step size that adapts to the level.
-    G.726 uses 2–5 bits per sample (16–40 kbit/s) and a 2-pole, 6-zero adaptive predictor. DECT cordless phones use it at 32 kbit/s.
-    IMA ADPCM is simpler: a fixed predictor and 4 bits. Here each of its 20 ms packets starts with a 24-bit header that carries the decoder's state.</p>
-
-  <h3>Vocoders</h3>
-  <p>A vocoder doesn't send the waveform. It models speech as a source (a buzz of pitch pulses for voiced sounds, or hiss for unvoiced ones)
-    driving a filter (the vocal tract). Each frame sends the pitch or an unvoiced flag, the loudness, and 10 filter coefficients
-    (reflection coefficients, sent as log-area ratios). LPC-10 (FS-1015, STANAG 4198) sends 54 bits every 22.5 ms, which is 2400 bit/s.
-    The decoder builds a new waveform with the right spectrum, so waveform SNR doesn't apply, and the red error trace is as big as the signal.
-    The lower rates here send the same 54-bit frame less often. DMR, P25 and dPMR radios use AMBE, a proprietary vocoder from the same family.</p>
-
-  <h3>Frames, packet loss and concealment</h3>
-  <p>Voice over IP sends speech in packets, often 20 ms each. Here PCM, G.711 and ADPCM are packed into 20 ms frames, and the vocoder uses its own frame length.
-    Lost frames are shaded on the plots. The decoder fills each gap with silence, with a repeat of the last frame, or with a repeat that fades by 6 dB per lost frame.
-    Real phones conceal more cleverly: G.711 Appendix I, for example, repeats whole pitch periods.
-    With “Bursts”, a two-state (Gilbert) model makes losses come in runs that average 3 frames. After a lost G.726 frame,
-    the decoder's predictor is out of step with the encoder until it re-adapts.</p>
-
-  <h3>Bit errors</h3>
-  <p>Errors are spread at random over the packed bits, with no error protection. Each codec fails in its own way:</p>
+  <h3>The codecs</h3>
   <ul>
-    <li>PCM and G.711: a wrong top bit gives a loud click.</li>
-    <li>G.726: the decoder's predictor and step size go astray, then drift back.</li>
-    <li>IMA: the decoder recovers at the next packet header.</li>
-    <li>Vocoder: a wrong pitch, gain or filter field spoils the whole frame.</li>
+    <li><b>PCM</b> rounds each sample to the nearest of a set of evenly spaced levels. Each bit adds about 6 dB of SNR. Telephone codecs sample at 8 kHz, so nothing above 3.4 kHz gets through.</li>
+    <li><b>G.711 μ-law and A-law</b> use 8 bits, with fine steps for quiet sounds and coarse steps for loud ones, so quiet speech survives. They are the codecs of the phone network.</li>
+    <li><b>ADPCM</b> (G.726, IMA) predicts each sample and sends only the error, with a step size that adapts. It needs about half G.711's bit rate.</li>
+    <li><b>Vocoders</b> (LPC-10) don't send the waveform. Each frame carries the pitch, the loudness and a vocal-tract filter, and the decoder synthesises new speech.
+      That's why the error trace is large even when the speech is clear. Digital radios such as DMR and P25 use vocoders from this family.</li>
   </ul>
-  <p>Loss and errors use fixed random seeds, so the same settings always give the same damage.</p>
 
-  <h3>How it's measured</h3>
-  <p>All figures are measured at the codec rate, against the original passed through the same anti-alias filter, so lost bandwidth isn't counted.
-    SNR is taken over the whole clip. Segmental SNR is the mean of the SNRs of 20 ms frames, each clamped to −10…35 dB. It skips frames more than 40 dB below the loudest,
-    and it tracks heard quality better than plain SNR. Spectral distortion compares the energy in third-octave bands, from 250 Hz up to the codec's bandwidth. For each 20 ms frame it takes the RMS difference in dB,
-    then averages over the same frames as segmental SNR. Bands more than 60 dB below the loudest are floored. It ignores the waveform,
-    so it is the one figure that also applies to the vocoder.</p>
-  <p>The test tone is 1020 Hz, as in telephone test sets. A 1 kHz tone at 8 kHz sampling is exactly 8 samples per cycle, so the same few sample values repeat and the quantisation error is not typical.</p>
-
-  <h3>Teaching versions</h3>
-  <p>These codecs were written for this page. G.711 and G.726 follow the published algorithms. IMA is close to the WAV format. The vocoder is a simplified LPC-10 that uses autocorrelation pitch detection.
-    None has been tested for bit-exact output.</p>
-
-  <h3>Reading the plots</h3>
-  <p>Grey is the clean source. Blue is what you hear. Red is the coding error: the decoded sound minus the band-limited original, which is what the figures measure.
-    For the vocoder the error is faded, because the vocoder doesn't try to keep the waveform.</p>
-  <p><b>Codec detail</b> (zoom):</p>
+  <h3>Packet loss and bit errors</h3>
+  <p>A lost frame (shaded) is replaced by silence, by a repeat of the last frame, or by a repeat that fades.
+    A bit error flips one bit at random, and each codec fails differently:</p>
   <ul>
-    <li>Dots are the samples the codec actually decoded, at 8 or 16 kHz.</li>
-    <li>PCM and G.711: the horizontal lines are the quantiser's levels. Where they are closer than 3 pixels they merge into a tint.</li>
-    <li>ADPCM: the dashed line is the decoder's prediction. The shaded band is how far one code can move from it, and it grows and shrinks as the step size adapts.</li>
-    <li>Vocoder:
-      <ul>
-        <li>Dashed lines are frame boundaries.</li>
-        <li>Grey frames are unvoiced (hiss).</li>
-        <li>Ticks along the bottom mark each pitch pulse.</li>
-        <li>In the “Zoom window” spectrum, the dashed curve is the decoded LPC envelope for the frame at the centre of the zoom.
-          For a voiced frame it is drawn at the level its harmonics should reach (choose 100 ms so the window is long enough to separate them). For an unvoiced frame it is the expected noise level in that FFT.</li>
-      </ul>
-    </li>
+    <li>PCM clicks.</li>
+    <li>ADPCM drifts off, then recovers.</li>
+    <li>The vocoder garbles a whole frame.</li>
   </ul>
-  <p><b>Spectrum views:</b></p>
+  <p>Fixed random seeds mean the same settings always give the same damage.</p>
+
+  <h3>The numbers</h3>
   <ul>
-    <li><b>Average</b> covers the whole clip.</li>
-    <li><b>Zoom window</b> covers only the samples in the zoom view, on a linear 0–8 kHz scale.</li>
-    <li><b>Waterfall</b> is live: frequency runs across (0–8 kHz), and time scrolls down from the playhead at 100 rows per second.
-      <ul>
-        <li>Original is on the left and decoded on the right, each with the spectrum at this moment above it. Colour runs from −100 dBFS (dark purple) to 0 dBFS (yellow).</li>
-        <li>While playing, each row is what was just heard, so if you change a setting the rows above the change show the new sound and those below show the old. Pausing redraws the whole history with the current settings.</li>
-        <li>The dashed line is the anti-alias cutoff, and red marks at the left of the decoded side are lost frames.</li>
-        <li>Click a row to move the zoom to that moment.</li>
-      </ul>
-    </li>
+    <li><b>SNR</b> compares the signal with the coding error over the whole clip.</li>
+    <li><b>Segmental SNR</b> averages the SNR over 20 ms frames, each clamped to −10…35 dB, skipping near-silent frames. It tracks what you hear better than SNR does.</li>
+    <li><b>Spectral distortion</b> is how far the shape of the spectrum differs, in dB. It is the one figure that also works for the vocoder.</li>
   </ul>
+  <p>All are measured at the codec rate, against the original band-limited the same way, so the lost bandwidth itself isn't counted.</p>
+
+  <h3>The plots</h3>
+  <p>Grey is the original, blue is what you hear and red is the error.</p>
+  <ul>
+    <li><b>Codec detail:</b> dots are the decoded samples. The overlay also shows the quantiser levels (PCM and G.711), the prediction and its step band (ADPCM), or the frames and pitch pulses (vocoder).</li>
+    <li><b>Waterfall:</b> scrolls live, with the original on the left and the decoded sound on the right. Yellow is loud and purple is quiet. Change a setting while playing to see before and after.</li>
+  </ul>
+  <p class="note">The codecs are simplified teaching versions written for this page, not bit-exact implementations.</p>
 
   <h3>Audio credits</h3>
   <p>Voice: “Inscription for an Old Bed”, read by NJB for LibriVox (public domain), via
@@ -288,7 +239,7 @@ dialog form { text-align: right; margin-top: 12px; }
     <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a>. Excerpt trimmed.</p>
   <p>Music: “Ryno's Theme” by Kevin MacLeod (<a href="https://incompetech.com" target="_blank" rel="noopener">incompetech.com</a>),
     <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Excerpt trimmed.</p>
-  <form method="dialog"><button>Close</button></form>
+  <form method="dialog"><button autofocus>Close</button></form>
 </dialog>
 
 <script>
