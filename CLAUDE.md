@@ -9,16 +9,24 @@ It has live playback, waveform and FFT plots, and presets. It is a sibling of
 - `tools/deploy.sh` uploads the page to NearlyFreeSpeech. It is git-ignored because it holds the login.
 
 ## Layout
-- `index.html` holds everything: HTML, CSS and JS inline. No libraries, no build step.
-  - The script runs in this order:
-    - helpers and source loading
+- No libraries, no build step, no modules: plain files loaded by `<script>` tags in order.
+  - `index.html` is the markup and the help popup.
+  - `style.css` is all the CSS.
+  - `dsp.js` is the signal processing. It has no DOM access and no shared state, and must load first.
+    In order:
+    - helpers
     - filters and the integer-ratio resampler (`firFor`, `decimate`, `interpolate`)
     - the bitstream (`BitWriter`, `BitReader`)
     - the codecs: G.711, `G726`, IMA, `LPC`
     - the `CODECS` registry
-    - channel (`flipBits`, `lossPattern`), `measure`, `processAudio`
+    - channel (`flipBits`, `lossPattern`) and `measure`
+    - the FFT and `welch`
+  - `app.js` is everything else:
+    - state and source loading
+    - `processAudio`
     - playback and plots
-  - The UI wiring and `PRESETS` sit at the end.
+    - UI wiring, and `PRESETS` at the end
+- Adding a file means listing it in `index.html` **and** in `tools/deploy.sh` (git-ignored), which uploads an explicit file list.
 - Sample codecs implement `encodeSample`/`readSample` (plus optional `encodeHeader`/`readHeader`).
   The generic `encodeSamples`/`decodeSamples` frame them. The vocoder brings its own `encode`/`decode`.
 - `audio/` holds the CC BY clips, copied from signal-stonefish. `audio/SOURCES.md` has their attribution,
@@ -41,8 +49,8 @@ It has live playback, waveform and FFT plots, and presets. It is a sibling of
 - Headless check: `chromium --headless=new --no-sandbox --virtual-time-budget=15000 --screenshot=… --window-size=1024,690`.
   - Screenshots render at the full window size. Scripts run before that, in a viewport about 87 px shorter,
     so for layout measurements from an injected script (e.g. the sidebar's `scrollHeight`) use `--window-size=1024,777`.
-  - `decodeAudioData` hangs in headless Chromium, so test on a copy without `audio/`;
-    the page then falls back to the tone.
+  - `decodeAudioData` hangs in headless Chromium, so test on a copy without `audio/` (copy
+    `index.html`, `style.css`, `dsp.js`, `app.js`); the page then falls back to the tone.
   - Script tests by injecting a `<script>` into that copy (with Python, not sed, so `\n`
     in strings survives). Set `S.x`, set controls, call `processAudio()` and read `S.res`.
     Print the results into a `<pre>` and read them with `--dump-dom`.

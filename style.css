@@ -1,0 +1,79 @@
+:root {
+  --text: #222; --muted: #777; --line: #ddd; --accent: #1f5fd6;
+  --orig: #a0a0a0; --deg: #1f5fd6; --err: #d9452b; --grid: #eee; --lost: #f7d9d2;
+  --level: #c6d2ec; --band: #e2eafa; --unv: #efefef;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; background: #fff; color: var(--text); font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+header { height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid var(--line); }
+h1 { font-size: 16px; font-weight: 600; margin: 0; }
+.app { display: grid; grid-template-columns: 250px 1fr; height: calc(100% - 40px); }
+aside { padding: 10px 16px; border-right: 1px solid var(--line); overflow-y: auto; display: flex; flex-direction: column; gap: 7px; }
+.lab { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: 600; }
+.lab label { cursor: pointer; }
+.val { font-weight: 400; color: var(--muted); }
+.val input { width: 58px; font: inherit; font-weight: 600; color: var(--text); text-align: right; padding: 1px 3px; border: 1px solid #bbb; border-radius: 3px; font-variant-numeric: tabular-nums; }
+.off .val, .off input[type=range], .off select, .off .sub { opacity: 0.4; }
+input[type=range] { width: 100%; margin: 2px 0 0; accent-color: var(--accent); }
+.ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+select, button { font: inherit; font-size: 13px; color: var(--text); }
+select { width: 100%; padding: 3px 4px; border: 1px solid #bbb; border-radius: 3px; background: #fff; }
+button { padding: 4px 9px; background: #fff; border: 1px solid #bbb; border-radius: 3px; cursor: pointer; }
+button:hover { border-color: #888; }
+button.on { background: var(--text); border-color: var(--text); color: #fff; }
+.link { border: 0; padding: 0; background: none; color: var(--accent); text-decoration: underline; }
+.row { display: flex; gap: 6px; align-items: center; }
+.row select { flex: 1; }
+.sub { font-size: 13px; white-space: nowrap; cursor: pointer; }
+.status, .note { font-size: 12px; color: var(--muted); }
+#codecCtl.fixed #paramRow, #codecCtl.fixed #paramNum { display: none; }
+#berNum { width: 66px; }
+table.readout { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.readout td { padding: 1px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.readout td:last-child { text-align: right; }
+.readout tr.main td { font-weight: 700; font-size: 16px; border-bottom: 0; }
+.transport { display: flex; gap: 6px; }
+header h1, header .link { flex: 1; } header .link { text-align: right; }
+.transport button { width: 84px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 0; font-size: 14px; }
+.transport svg { width: 12px; height: 12px; fill: currentColor; }
+
+.plots { display: flex; flex-direction: column; padding: 4px 16px 12px; min-width: 0; min-height: 0; }
+.head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin: 8px 0 4px; }
+.head b { color: var(--text); font-weight: 600; }
+.legend span { margin-left: 12px; white-space: nowrap; }
+.legend i { display: inline-block; width: 12px; height: 3px; margin-right: 5px; vertical-align: middle; }
+.legend i.box { height: 10px; }
+.zoom button { padding: 1px 6px; font-size: 12px; }
+.zoom .sub { font-size: 12px; color: var(--text); margin-right: 8px; }
+.legend .dim { opacity: 0.45; }
+.plot { position: relative; min-height: 0; }
+.plot canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ov { flex: 0 0 52px; cursor: crosshair; touch-action: none; }
+.zm { flex: 1 1 0; }
+.sp { flex: 1.25 1 0; }
+.mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+dialog { max-width: 640px; width: calc(100% - 32px); border: 1px solid #bbb; border-radius: 4px; padding: 16px 22px; color: var(--text); }
+dialog::backdrop { background: rgba(0, 0, 0, 0.3); }
+dialog h2 { font-size: 16px; margin: 0 0 8px; outline: none; } /* focused on open so the popup starts at the top */
+dialog h3 { font-size: 14px; margin: 14px 0 4px; }
+dialog p { margin: 0 0 6px; }
+dialog form { text-align: right; margin-top: 12px; }
+
+/* Phones: let the page scroll instead of squeezing everything into one screen.
+   Portrait is a single column; landscape (short but wide) keeps two columns. */
+@media (max-width: 760px), (max-height: 560px) {
+  html, body { height: auto; }
+  .app { height: auto; }
+  aside { overflow-y: visible; }
+  .plots { display: block; }
+  .ov { height: 52px; } .zm { height: 200px; } .sp { height: 240px; }
+}
+@media (max-width: 760px) {
+  header { height: auto; flex-wrap: wrap; padding: 6px 16px; row-gap: 6px; }
+  header .link { flex: none; }
+  .transport { order: 3; flex: 1 0 100%; }
+  .transport button { flex: 1; width: auto; }
+  .app { display: block; }
+  aside { border-right: 0; border-bottom: 1px solid var(--line); }
+}

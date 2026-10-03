@@ -49,7 +49,10 @@ Presets cover comparisons (linear vs μ-law, linear vs ADPCM at the same rate, w
 
 | Path | What |
 |---|---|
-| `index.html` | The whole app: HTML, CSS and JS inline, no dependencies |
+| `index.html` | The page markup and the "How do these work?" popup |
+| `style.css` | All styling, including the phone layouts |
+| `dsp.js` | Signal processing: filters, bitstream, the codecs, channel, measurement, FFT. No DOM |
+| `app.js` | State, loading, the processing chain, playback, plots, controls and presets |
 | `audio/voice.wav`, `audio/voice-woman.wav`, `audio/voice-deep.wav`, `audio/music.wav` | Bundled clips (CC BY; see `audio/SOURCES.md`) |
 | `audio/SOURCES.md` | Where each clip came from, its licence and attribution |
 
