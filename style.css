@@ -7,7 +7,7 @@
 html, body { height: 100%; margin: 0; background: #fff; color: var(--text); font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
 header { height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 1px solid var(--line); }
 h1 { font-size: 16px; font-weight: 600; margin: 0; }
-.app { display: grid; grid-template-columns: 250px 1fr; height: calc(100% - 40px); }
+.app { display: grid; grid-template-columns: 270px 1fr; height: calc(100% - 40px); }
 aside { padding: 10px 16px; border-right: 1px solid var(--line); overflow-y: auto; display: flex; flex-direction: column; gap: 7px; }
 .lab { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: 600; }
 .lab label { cursor: pointer; }
