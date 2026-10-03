@@ -67,12 +67,22 @@ dialog h3 { font-size: 14px; margin: 14px 0 4px; }
 dialog p { margin: 0 0 6px; }
 dialog form { text-align: right; margin-top: 12px; }
 
-@media (max-width: 760px) {
+/* Phones: let the page scroll instead of squeezing everything into one screen.
+   Portrait is a single column; landscape (short but wide) keeps two columns. */
+@media (max-width: 760px), (max-height: 560px) {
   html, body { height: auto; }
-  .app { display: block; height: auto; }
-  aside { border-right: 0; border-bottom: 1px solid var(--line); }
+  .app { height: auto; }
+  aside { overflow-y: visible; }
   .plots { display: block; }
   .ov { height: 52px; } .zm { height: 200px; } .sp { height: 240px; }
+}
+@media (max-width: 760px) {
+  header { height: auto; flex-wrap: wrap; padding: 6px 16px; row-gap: 6px; }
+  header .link { flex: none; }
+  .transport { order: 3; flex: 1 0 100%; }
+  .transport button { flex: 1; width: auto; }
+  .app { display: block; }
+  aside { border-right: 0; border-bottom: 1px solid var(--line); }
 }
 </style>
 </head>
