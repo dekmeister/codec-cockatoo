@@ -537,7 +537,7 @@ function drawWindow() {
 // ---- waterfall: live, frequency across and time scrolling down; original left, decoded right.
 // While playing, each new row is what was just heard, so earlier rows keep the settings they were played with.
 // When paused, the whole history is redrawn from the current settings, ending at the playhead.
-const WF = { fmax: 8000, n: 1024, rowSamples: 480, dbMin: -100, strip: 40, gap: 12, pad: { l: 36, r: 40, t: 7, b: 16 } };
+const WF = { fmax: 8000, n: 1024, rowSamples: 480, dbMin: -100, strip: 40, gap: 12, pad: { l: 36, r: 50, t: 7, b: 16 } };
 const WF_HANN = (() => { const w = new Float64Array(WF.n); for (let i = 0; i < WF.n; i++) w[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / WF.n); return w; })();
 const WF_REF = (() => { let s = 0; for (const v of WF_HANN) s += v; return (s / 2) ** 2; })(); // a sine of amplitude A reads A²
 // viridis, −100 dBFS (dark purple) to 0 dBFS (yellow)
