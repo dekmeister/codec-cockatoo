@@ -62,7 +62,7 @@ header h1, header .link { flex: 1; } header .link { text-align: right; }
 
 dialog { max-width: 640px; width: calc(100% - 32px); border: 1px solid #bbb; border-radius: 4px; padding: 16px 22px; color: var(--text); }
 dialog::backdrop { background: rgba(0, 0, 0, 0.3); }
-dialog h2 { font-size: 16px; margin: 0 0 8px; }
+dialog h2 { font-size: 16px; margin: 0 0 8px; outline: none; } /* focused on open so the popup starts at the top */
 dialog h3 { font-size: 14px; margin: 14px 0 4px; }
 dialog p { margin: 0 0 6px; }
 dialog form { text-align: right; margin-top: 12px; }
@@ -188,7 +188,7 @@ dialog form { text-align: right; margin-top: 12px; }
 </div>
 
 <dialog id="about">
-  <h2>How speech codecs work</h2>
+  <h2 tabindex="-1" autofocus>How speech codecs work</h2>
   <p>A codec turns sound into bits and back, and speech codecs trade bit rate against quality. Here the encoder writes real bits.
     The channel can drop or flip them, and the decoder rebuilds the sound from whatever arrives.</p>
 
@@ -239,7 +239,7 @@ dialog form { text-align: right; margin-top: 12px; }
     <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a>. Excerpt trimmed.</p>
   <p>Music: “Ryno's Theme” by Kevin MacLeod (<a href="https://incompetech.com" target="_blank" rel="noopener">incompetech.com</a>),
     <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>. Excerpt trimmed.</p>
-  <form method="dialog"><button autofocus>Close</button></form>
+  <form method="dialog"><button>Close</button></form>
 </dialog>
 
 <script>
